@@ -1,0 +1,30 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EF4444" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#DC2626" stop-opacity="0.4"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-4" y="-4" width="56" height="56" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+    <filter id="glow" x="-8" y="-8" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#EF4444" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g filter="url(#filter0_b)">
+    <circle cx="24" cy="24" r="20" fill="url(#paint0_linear)" fill-opacity="0.15"/>
+    <circle cx="24" cy="24" r="19.5" stroke="white" stroke-opacity="0.2"/>
+  </g>
+  <g filter="url(#glow)">
+    <path d="M16 19C16 18.4477 16.4477 18 17 18H31C31.5523 18 32 18.4477 32 19V19C32 19.5523 31.5523 20 31 20H17C16.4477 20 16 19.5523 16 19V19Z" fill="white" fill-opacity="0.5"/>
+    <path d="M19 16C19 15.4477 19.4477 15 20 15H28C28.5523 15 29 15.4477 29 16V18H19V16Z" fill="white" fill-opacity="0.3"/>
+    <path d="M30 20L29 33C29 33.5523 28.5523 34 28 34H20C19.4477 34 19 33.5523 19 33L18 20" stroke="white" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M22 24V30M26 24V30" stroke="white" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg> 

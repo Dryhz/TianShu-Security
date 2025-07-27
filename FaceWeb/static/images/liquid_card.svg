@@ -1,0 +1,54 @@
+<svg width="180" height="240" viewBox="0 0 180 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="180" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60A5FA" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#3B82F6" stop-opacity="0.04"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-20" y="-20" width="220" height="280" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="10"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+    <filter id="filter1_f" x="-20" y="-20" width="220" height="280" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="10" result="effect1_foregroundBlur"/>
+    </filter>
+    <clipPath id="clip0">
+      <rect width="180" height="240" rx="16" fill="white"/>
+    </clipPath>
+  </defs>
+  
+  <!-- 模糊的背景效果 -->
+  <g clip-path="url(#clip0)">
+    <g filter="url(#filter0_b)">
+      <rect width="180" height="240" rx="16" fill="url(#paint0_linear)"/>
+      <rect x="0.5" y="0.5" width="179" height="239" rx="15.5" stroke="white" stroke-opacity="0.1"/>
+    </g>
+    
+    <!-- 流动效果 -->
+    <g filter="url(#filter1_f)" opacity="0.3">
+      <ellipse cx="90" cy="90" rx="60" ry="40" fill="#38BDF8" fill-opacity="0.1"/>
+      <ellipse cx="50" cy="160" rx="30" ry="20" fill="#38BDF8" fill-opacity="0.05"/>
+      <ellipse cx="140" cy="200" rx="25" ry="15" fill="#38BDF8" fill-opacity="0.05"/>
+    </g>
+    
+    <!-- 头像占位符 -->
+    <circle cx="90" cy="80" r="50" fill="white" fill-opacity="0.03" stroke="white" stroke-opacity="0.1" stroke-width="1"/>
+    <path d="M90 70C96.0751 70 101 75.0294 101 81.25C101 87.4706 96.0751 92.5 90 92.5C83.9249 92.5 79 87.4706 79 81.25C79 75.0294 83.9249 70 90 70Z" fill="white" fill-opacity="0.07"/>
+    <path d="M90 101.25C100.77 101.25 110 106.028 110 112.5C110 118.972 100.77 123.75 90 123.75C79.2304 123.75 70 118.972 70 112.5C70 106.028 79.2304 101.25 90 101.25Z" fill="white" fill-opacity="0.07"/>
+
+    <!-- 名字占位符 -->
+    <rect x="50" y="140" width="80" height="6" rx="3" fill="white" fill-opacity="0.2"/>
+    <rect x="65" y="155" width="50" height="6" rx="3" fill="white" fill-opacity="0.1"/>
+    
+    <!-- 底部装饰线 -->
+    <rect x="45" y="180" width="90" height="2" rx="1" fill="white" fill-opacity="0.05"/>
+    <rect x="60" y="190" width="60" height="2" rx="1" fill="white" fill-opacity="0.05"/>
+    <rect x="70" y="200" width="40" height="2" rx="1" fill="white" fill-opacity="0.05"/>
+    
+    <!-- 发光边框 -->
+    <rect x="1" y="1" width="178" height="238" rx="15" stroke="url(#paint0_linear)" stroke-opacity="0.3" stroke-width="2"/>
+  </g>
+</svg> 

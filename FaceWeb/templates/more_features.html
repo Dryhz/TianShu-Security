@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更多功能 - 天枢安全智能门卫管理系统</title>
+    <link rel="icon" href="/static/images/face.svg" type="image/svg+xml">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="/static/css/modern.css">
+    <link rel="stylesheet" href="/static/css/svg-background.css">
+    
+    <style>
+        :root {
+            --primary-color: #0084ff;
+            --secondary-color: #00c2ff;
+            --accent-color: #00e5ff;
+            --dark-bg: #0a1929;
+            --card-bg: rgba(16, 36, 61, 0.7);
+            --text-light: #ffffff;
+            --text-secondary: #93c5fd;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 背景渐变元素 */
+        .gradient-bg {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+        
+        .gradient-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0,132,255,0.3) 0%, rgba(0,0,0,0) 70%);
+            top: -200px;
+            right: -100px;
+        }
+        
+        .gradient-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0,229,255,0.3) 0%, rgba(0,0,0,0) 70%);
+            bottom: -200px;
+            left: -200px;
+        }
+        
+        /* 标题和页头 */
+        .page-header {
+            padding: 30px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        
+        /* 功能卡片 */
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+        
+        .feature-icon {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,132,255,0.15) 0%, rgba(0,0,0,0) 70%);
+            left: -10px;
+            top: -10px;
+            z-index: -1;
+        }
+        
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        
+        .feature-title {
+            margin: 0 0 10px 0;
+            font-weight: 600;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+        
+        .feature-description ul {
+            padding-left: 1.2rem;
+            margin-top: 15px;
+        }
+        
+        .feature-description li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .feature-actions {
+            display: flex;
+            justify-content: flex-start;
+        }
+        
+        /* 状态标签 */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-left: 15px;
+        }
+        
+        .status-active {
+            background: rgba(6, 214, 160, 0.15);
+            color: #06d6a0;
+            border: 1px solid rgba(6, 214, 160, 0.3);
+        }
+        
+        .status-development {
+            background: rgba(255, 209, 102, 0.15);
+            color: #ffd166;
+            border: 1px solid rgba(255, 209, 102, 0.3);
+        }
+        
+        /* 按钮样式 */
+        .btn-feature {
+            background: rgba(0, 132, 255, 0.15);
+            color: var(--text-light);
+            border: 1px solid rgba(0, 132, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-feature:hover {
+            background: rgba(0, 132, 255, 0.3);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-feature i {
+            font-size: 0.9rem;
+        }
+        
+        /* 动态光效 */
+        .glow-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            bottom: 0;
+            left: 0;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 991px) {
+            .feature-card {
+                padding: 20px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .feature-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .status-badge {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 背景渐变 -->
+    <div class="gradient-bg gradient-1"></div>
+    <div class="gradient-bg gradient-2"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/images/face.svg" width="30" height="30" class="d-inline-block align-top me-2" alt="Logo">
+                <span class="typewriter">天枢安全 —— 智能门卫管理系统</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-cubes me-3"></i>更多功能</h1>
+            <p>智能门卫管理系统提供多样化的功能模块，满足不同场景下的安全管理需求。选择下方功能进行体验和配置。</p>
+        </div>
+
+        <div class="row">
+            <!-- 身份识别与验证 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <div class="feature-title">
+                        身份识别与验证
+                        <span class="status-badge status-active">已启用</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>基于多重生物识别技术的全方位身份验证系统，支持人脸、指纹、门禁卡和二维码等多种识别方式，确保只有授权人员才能进入受控区域。</p>
+                        <ul>
+                            <li>无接触式人脸识别，适用于常规出入场景</li>
+                            <li>NFC/IC卡快速验证，适合临时访客</li>
+                            <li>高精度指纹识别，用于高安全级别区域</li>
+                            <li>移动端二维码，支持远程临时授权</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-cog"></i> 配置验证方式
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 访客管理 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="feature-title">
+                        访客管理
+                        <span class="status-badge status-active">已启用</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>智能访客预约与管理系统，支持线上预约、身份验证、访问授权和轨迹记录，提供完整的访客全生命周期管理。</p>
+                        <ul>
+                            <li>微信/App线上预约，自助登记访客信息</li>
+                            <li>实时通知被访者，远程批准或拒绝访问</li>
+                            <li>自动生成限时访问二维码或临时凭证</li>
+                            <li>访客活动轨迹记录，便于安全回溯</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-clipboard-list"></i> 访客记录管理
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 车辆管理 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                    <div class="feature-title">
+                        车辆管理
+                        <span class="status-badge status-active">已启用</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>基于AI视觉的智能车辆识别与管理系统，实现车牌自动识别、车辆分类、智能道闸控制和停车位资源管理。</p>
+                        <ul>
+                            <li>高精度车牌识别，支持夜间和特殊天气</li>
+                            <li>常用车辆自动放行，访客车辆智能引导</li>
+                            <li>实时车位监控与导航，优化停车资源</li>
+                            <li>车辆出入记录与统计分析，便于管理</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-chart-pie"></i> 车辆数据分析
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 异常情况预警 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-title">
+                        异常情况预警
+                        <span class="status-badge status-development">开发中</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>通过先进的计算机视觉和行为分析技术，对门禁区域进行实时监控，识别可疑行为并自动触发警报。</p>
+                        <ul>
+                            <li>智能行为分析，识别徘徊、尾随等可疑行为</li>
+                            <li>区域入侵检测，防止未授权人员闯入</li>
+                            <li>多级警报机制，根据威胁等级采取相应措施</li>
+                            <li>AI视频分析，快速定位潜在安全隐患</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-bell"></i> 配置预警规则
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据记录与查询 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="feature-title">
+                        数据记录与查询
+                        <span class="status-badge status-active">已启用</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>全面记录系统运行的各类数据，提供多维度查询分析功能，支持数据可视化和导出，方便管理和安全追溯。</p>
+                        <ul>
+                            <li>人员出入记录，包含时间、位置和验证方式</li>
+                            <li>车辆进出数据，统计车流量和停车时长</li>
+                            <li>多条件组合查询，快速定位历史记录</li>
+                            <li>可视化报表生成，展示出入高峰和使用趋势</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-search"></i> 进入数据中心
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联动控制与集成 -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="feature-title">
+                        联动控制与集成
+                        <span class="status-badge status-development">开发中</span>
+                    </div>
+                    <div class="feature-description">
+                        <p>实现与其他智能系统的无缝集成与联动，包括监控、消防、照明等，根据不同场景自动触发相应操作。</p>
+                        <ul>
+                            <li>与消防系统联动，紧急情况自动开启所有出口</li>
+                            <li>智能照明控制，根据人流量调节亮度和范围</li>
+                            <li>与监控系统集成，实现追踪和取证功能</li>
+                            <li>支持物业管理平台API接口，数据互通共享</li>
+                        </ul>
+                    </div>
+                    <div class="feature-actions">
+                        <button class="btn btn-feature">
+                            <i class="fas fa-plug"></i> 系统联动配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 系统状态卡片 -->
+        <div class="feature-card mt-4">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4 class="mb-4"><i class="fas fa-server me-2"></i> 系统状态</h4>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width: 10px; height: 10px; background-color: #06d6a0; border-radius: 50%; margin-right: 10px;"></div>
+                                <span>人脸识别服务</span>
+                                <span class="ms-auto">正常运行</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width: 10px; height: 10px; background-color: #06d6a0; border-radius: 50%; margin-right: 10px;"></div>
+                                <span>门禁控制系统</span>
+                                <span class="ms-auto">正常运行</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width: 10px; height: 10px; background-color: #ffd166; border-radius: 50%; margin-right: 10px;"></div>
+                                <span>车辆识别系统</span>
+                                <span class="ms-auto">部分可用</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div style="width: 10px; height: 10px; background-color: #06d6a0; border-radius: 50%; margin-right: 10px;"></div>
+                                <span>数据存储服务</span>
+                                <span class="ms-auto">正常运行</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h4 class="mb-4"><i class="fas fa-chart-line me-2"></i> 系统使用统计</h4>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="d-flex flex-column">
+                                <span class="text-secondary mb-1">今日人员通行</span>
+                                <span class="fs-4">247 人次</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex flex-column">
+                                <span class="text-secondary mb-1">今日车辆通行</span>
+                                <span class="fs-4">128 车次</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex flex-column">
+                                <span class="text-secondary mb-1">访客登记</span>
+                                <span class="fs-4">32 人次</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex flex-column">
+                                <span class="text-secondary mb-1">系统运行时间</span>
+                                <span class="fs-4">96.7 小时</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-5 py-4 border-top border-secondary">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">© 2025 苏州科技大学 | 人工智能2411第一组作品</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">
+                        <i class="fas fa-code me-2"></i> 基于人工智能的智能门卫管理系统
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 自定义脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 删除鼠标移动时的3D动画效果
+            
+            // 按钮点击效果
+            const buttons = document.querySelectorAll('.btn-feature');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('此功能模块正在完善中，敬请期待！');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

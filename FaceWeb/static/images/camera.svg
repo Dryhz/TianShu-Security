@@ -1,0 +1,21 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="6" y1="12" x2="42" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#3B82F6" stop-opacity="0.5"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-8" y="-8" width="64" height="64" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+  </defs>
+  <g filter="url(#filter0_b)">
+    <rect x="4" y="12" width="40" height="24" rx="12" fill="url(#paint0_linear)" fill-opacity="0.2"/>
+    <rect x="4.5" y="12.5" width="39" height="23" rx="11.5" stroke="rgba(255, 255, 255, 0.2)" stroke-opacity="0.2"/>
+  </g>
+  <path d="M32 24C32 28.4183 28.4183 32 24 32C19.5817 32 16 28.4183 16 24C16 19.5817 19.5817 16 24 16C28.4183 16 32 19.5817 32 24Z" fill="white" fill-opacity="0.15"/>
+  <path d="M30 24C30 27.3137 27.3137 30 24 30C20.6863 30 18 27.3137 18 24C18 20.6863 20.6863 18 24 18C27.3137 18 30 20.6863 30 24Z" stroke="white" stroke-opacity="0.6" stroke-width="1.5"/>
+  <circle cx="34" cy="18" r="2" fill="white" fill-opacity="0.6"/>
+</svg> 

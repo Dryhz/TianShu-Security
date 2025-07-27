@@ -1,0 +1,66 @@
+<svg width="1353" height="807" viewBox="0 0 1353 807" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg_gradient" cx="0.5" cy="0.3" r="0.8" gradientUnits="userSpaceOnUse" gradientTransform="translate(676.5 242.1) scale(1353 807)">
+      <stop stop-color="#0C111D" stop-opacity="0.9"/>
+      <stop offset="0.3" stop-color="#0F172A" stop-opacity="0.95"/>
+      <stop offset="0.6" stop-color="#161E31" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#0D1526" stop-opacity="1"/>
+    </radialGradient>
+    
+    <!-- 创建流体效果的滤镜 -->
+    <filter id="liquid_noise" x="0" y="0" width="100%" height="100%" filterUnits="userSpaceOnUse">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="3" stitchTiles="stitch" />
+      <feDisplacementMap in="SourceGraphic" scale="40" />
+    </filter>
+    
+    <!-- 创建发光效果 -->
+    <filter id="glow_effect" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feFlood flood-color="#38BDF8" flood-opacity="0.15" />
+      <feComposite in2="blur" operator="in" result="glow" />
+      <feComposite in="SourceGraphic" in2="glow" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- 主背景 -->
+  <rect width="1353" height="807" fill="url(#bg_gradient)" />
+  
+  <!-- 液态玻璃效果元素 -->
+  <g filter="url(#liquid_noise)">
+    <!-- 左上角的液态圆 -->
+    <circle cx="300" cy="200" r="250" fill="#38BDF8" fill-opacity="0.03" />
+    
+    <!-- 右下角的液态圆 -->
+    <circle cx="1100" cy="650" r="300" fill="#38BDF8" fill-opacity="0.04" />
+    
+    <!-- 中间的液态椭圆 -->
+    <ellipse cx="676" cy="400" rx="400" ry="250" fill="#38BDF8" fill-opacity="0.02" />
+  </g>
+  
+  <!-- 添加发光线条 -->
+  <g filter="url(#glow_effect)">
+    <path d="M100,200 Q400,100 700,300 T1300,250" stroke="#38BDF8" stroke-opacity="0.2" stroke-width="2" fill="none" />
+    <path d="M50,500 Q300,700 800,600 T1300,700" stroke="#38BDF8" stroke-opacity="0.1" stroke-width="2" fill="none" />
+  </g>
+  
+  <!-- 添加微粒效果 -->
+  <g filter="url(#liquid_noise)">
+    <circle cx="200" cy="150" r="3" fill="white" fill-opacity="0.3" />
+    <circle cx="350" cy="250" r="2" fill="white" fill-opacity="0.4" />
+    <circle cx="500" cy="100" r="2" fill="white" fill-opacity="0.3" />
+    <circle cx="650" cy="200" r="3" fill="white" fill-opacity="0.4" />
+    <circle cx="800" cy="150" r="2" fill="white" fill-opacity="0.3" />
+    <circle cx="950" cy="250" r="3" fill="white" fill-opacity="0.3" />
+    <circle cx="1100" cy="200" r="2" fill="white" fill-opacity="0.4" />
+    <circle cx="1250" cy="150" r="2" fill="white" fill-opacity="0.3" />
+    
+    <circle cx="200" cy="550" r="2" fill="white" fill-opacity="0.3" />
+    <circle cx="350" cy="650" r="3" fill="white" fill-opacity="0.3" />
+    <circle cx="500" cy="700" r="2" fill="white" fill-opacity="0.4" />
+    <circle cx="650" cy="600" r="2" fill="white" fill-opacity="0.3" />
+    <circle cx="800" cy="750" r="3" fill="white" fill-opacity="0.3" />
+    <circle cx="950" cy="650" r="2" fill="white" fill-opacity="0.4" />
+    <circle cx="1100" cy="600" r="3" fill="white" fill-opacity="0.3" />
+    <circle cx="1250" cy="750" r="2" fill="white" fill-opacity="0.4" />
+  </g>
+</svg> 

@@ -1,0 +1,28 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22C55E" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0.4"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-4" y="-4" width="56" height="56" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+    <filter id="glow" x="-8" y="-8" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#22C55E" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g filter="url(#filter0_b)">
+    <circle cx="24" cy="24" r="20" fill="url(#paint0_linear)" fill-opacity="0.15"/>
+    <circle cx="24" cy="24" r="19.5" stroke="rgba(255, 255, 255, 0.2)" stroke-opacity="0.2"/>
+  </g>
+  <g filter="url(#glow)">
+    <path d="M34 24L20 32L20 16L34 24Z" fill="white" fill-opacity="0.5"/>
+    <path d="M20.5 16.866L33.5 24L20.5 31.134L20.5 16.866Z" stroke="white" stroke-opacity="0.8" stroke-width="1"/>
+  </g>
+</svg> 

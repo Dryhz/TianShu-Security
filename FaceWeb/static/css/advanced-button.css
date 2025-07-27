@@ -1,0 +1,96 @@
+/* 高级设置按钮特效样式 */
+
+/* 基础样式 */
+#btn-advanced-settings {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0062ff, #00a8ff);
+    border: none;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(0, 98, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 按钮悬停效果 */
+#btn-advanced-settings:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 98, 255, 0.4);
+    background: linear-gradient(135deg, #0062ff, #00ccff);
+}
+
+/* 按钮按下效果 */
+#btn-advanced-settings:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 98, 255, 0.3);
+}
+
+/* 按钮边框发光效果 */
+#btn-advanced-settings::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #00ccff, transparent, #0062ff, transparent, #00ccff);
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: glow 3s ease infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#btn-advanced-settings:hover::before {
+    opacity: 1;
+}
+
+/* 按钮文字闪烁效果 */
+#btn-advanced-settings:hover i {
+    animation: blink 1s ease infinite;
+}
+
+/* 创建高亮动画效果 */
+@keyframes glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* 科技感强调效果 */
+#btn-advanced-settings::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 100%;
+    top: 0;
+    left: -50px;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -50px; }
+    20% { left: 150%; }
+    100% { left: 150%; }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    #btn-advanced-settings {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+} 

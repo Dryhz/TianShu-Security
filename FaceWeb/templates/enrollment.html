@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人脸录入 - 智能人脸识别系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <i class="fas fa-microchip"></i> 智能人脸识别系统
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('recognition') }}" class="nav-link">人脸识别</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('enrollment') }}" class="nav-link active">人脸录入</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('management') }}" class="nav-link">人脸管理</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="container">
+        <h1 style="margin-top: 30px; text-align: center;">人脸录入</h1>
+        <p style="text-align: center; margin-bottom: 30px;">
+            添加新的人脸数据到系统中
+        </p>
+
+        <!-- 创建人脸卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>创建人脸</h3>
+            </div>
+            <div class="form-group">
+                <label for="face-name" class="form-label">人脸名称：</label>
+                <input type="text" id="face-name" class="form-control" placeholder="输入人脸名称（如：张三）">
+                <small style="color: var(--text-dark);">注意：名称一旦创建将无法修改</small>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-success" id="btn-create-face">
+                    <i class="fas fa-plus-circle"></i> 创建人脸
+                </button>
+            </div>
+        </div>
+
+        <!-- 录入方式选择卡片 -->
+        <div class="card" id="enrollment-methods" style="display: none;">
+            <div class="card-header">
+                <h3>选择录入方式</h3>
+                <div id="current-face" style="color: var(--primary-light);">
+                    当前人脸：<span id="current-face-name"></span>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col" style="text-align: center;">
+                    <button class="btn btn-primary" id="btn-upload" onclick="activateTab('upload')">
+                        <i class="fas fa-image"></i> 上传图片
+                    </button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button class="btn btn-primary" id="btn-camera" onclick="activateTab('camera')">
+                        <i class="fas fa-camera"></i> 摄像头拍照
+                    </button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button class="btn btn-primary" id="btn-batch" onclick="activateTab('batch')">
+                        <i class="fas fa-images"></i> 批量上传
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 上传图片录入部分 -->
+        <div class="tab-content" id="tab-upload" style="display: none;">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>上传图片录入</h3>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label for="upload-image" class="form-label">选择图片文件：</label>
+                            <input type="file" id="upload-image" class="form-control" accept="image/*">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-success" id="btn-add-face" disabled>
+                                <i class="fas fa-plus"></i> 添加人脸
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>图片预览</h3>
+                        </div>
+                        <div class="video-container" id="image-preview-container">
+                            <img id="preview-image" src="" alt="图片预览" style="display: none;">
+                            <div id="image-placeholder" style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                color: var(--text-dark);
+                            ">
+                                <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p>请上传图片以查看预览</p>
+                            </div>
+                        </div>
+                        <div id="face-detection-result" style="margin-top: 15px; display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> <span id="detection-message"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 摄像头拍照录入部分 -->
+        <div class="tab-content" id="tab-camera" style="display: none;">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>摄像头拍照录入</h3>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-primary" id="btn-start-camera">
+                                <i class="fas fa-video"></i> 开启摄像头
+                            </button>
+                            <button class="btn btn-danger" id="btn-stop-camera" style="display: none;">
+                                <i class="fas fa-stop"></i> 停止摄像头
+                            </button>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-success" id="btn-capture" disabled>
+                                <i class="fas fa-camera"></i> 拍照
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>摄像头预览</h3>
+                        </div>
+                        <div class="video-container">
+                            <video id="camera-video" style="display: none;" autoplay muted></video>
+                            <canvas id="camera-canvas"></canvas>
+                            <div id="camera-placeholder" style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                color: var(--text-dark);
+                            ">
+                                <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p>请开启摄像头以查看预览</p>
+                            </div>
+                        </div>
+                        <div id="camera-detection-result" style="margin-top: 15px; display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> <span id="camera-detection-message"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 批量上传部分 -->
+        <div class="tab-content" id="tab-batch" style="display: none;">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>批量上传图片</h3>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label for="batch-upload" class="form-label">选择多张图片：</label>
+                            <input type="file" id="batch-upload" class="form-control" accept="image/*" multiple>
+                            <small style="color: var(--text-dark);">可以同时选择多张图片进行批量上传</small>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-success" id="btn-batch-upload" disabled>
+                                <i class="fas fa-upload"></i> 开始上传
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>上传进度</h3>
+                        </div>
+                        <div id="batch-progress-container" style="margin-top: 20px; display: none;">
+                            <div class="progress-bar" style="
+                                height: 20px;
+                                background: rgba(0, 30, 60, 0.5);
+                                border-radius: 10px;
+                                margin-bottom: 10px;
+                                overflow: hidden;
+                            ">
+                                <div id="progress-inner" style="
+                                    height: 100%;
+                                    width: 0%;
+                                    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+                                    transition: width 0.3s ease;
+                                "></div>
+                            </div>
+                            <div id="progress-text">已选择 <span id="uploaded-count">0</span> / <span id="total-count">0</span> 张图片</div>
+                        </div>
+                        <div id="batch-result" style="margin-top: 15px; display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> <span id="batch-message"></span>
+                            </div>
+                            <div id="success-images" style="margin-top: 15px;">
+                                <div class="function-title">
+                                    <i class="fas fa-check-circle"></i> 成功添加
+                                </div>
+                                <div id="success-grid" style="
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                                    gap: 10px;
+                                    margin-top: 10px;
+                                "></div>
+                            </div>
+                            <div id="failed-images" style="margin-top: 15px;">
+                                <div class="function-title">
+                                    <i class="fas fa-times-circle"></i> 添加失败
+                                </div>
+                                <div id="failed-grid" style="
+                                    display: grid;
+                                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                                    gap: 10px;
+                                    margin-top: 10px;
+                                "></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创新功能：人脸质量评估 -->
+        <div class="card" id="face-quality-card" style="display: none; margin-top: 30px;">
+            <div class="card-header">
+                <h3>人脸质量评估</h3>
+                <button class="btn btn-sm btn-primary" id="toggle-quality-details">
+                    显示详情
+                </button>
+            </div>
+            <div class="quality-summary">
+                <div class="quality-score" style="
+                    text-align: center;
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin: 20px 0;
+                    color: var(--primary-light);
+                ">
+                    质量评分：<span id="quality-score-value">0</span> / 100
+                </div>
+                <div class="quality-bar" style="
+                    height: 20px;
+                    background: rgba(0, 30, 60, 0.5);
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                ">
+                    <div id="quality-bar-inner" style="
+                        height: 100%;
+                        width: 0%;
+                        background: linear-gradient(90deg, var(--danger-color), var(--warning-color), var(--success-color));
+                        transition: width 0.3s ease;
+                    "></div>
+                </div>
+                <div id="quality-suggestion" class="alert alert-info" style="margin-bottom: 20px;">
+                    <i class="fas fa-lightbulb"></i> <span id="quality-tip">上传图像以获取质量评估</span>
+                </div>
+            </div>
+            <div id="quality-details" style="display: none;">
+                <div class="row">
+                    <!-- 亮度评估 -->
+                    <div class="col">
+                        <div class="quality-item">
+                            <div class="quality-item-title">
+                                <i class="fas fa-sun"></i> 亮度
+                            </div>
+                            <div class="quality-item-score">
+                                <span id="brightness-score">0</span> / 20
+                            </div>
+                            <div class="quality-item-bar">
+                                <div id="brightness-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 清晰度评估 -->
+                    <div class="col">
+                        <div class="quality-item">
+                            <div class="quality-item-title">
+                                <i class="fas fa-glasses"></i> 清晰度
+                            </div>
+                            <div class="quality-item-score">
+                                <span id="clarity-score">0</span> / 20
+                            </div>
+                            <div class="quality-item-bar">
+                                <div id="clarity-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 15px;">
+                    <!-- 姿态评估 -->
+                    <div class="col">
+                        <div class="quality-item">
+                            <div class="quality-item-title">
+                                <i class="fas fa-compass"></i> 姿态
+                            </div>
+                            <div class="quality-item-score">
+                                <span id="pose-score">0</span> / 20
+                            </div>
+                            <div class="quality-item-bar">
+                                <div id="pose-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 人脸完整度 -->
+                    <div class="col">
+                        <div class="quality-item">
+                            <div class="quality-item-title">
+                                <i class="fas fa-crop-alt"></i> 完整度
+                            </div>
+                            <div class="quality-item-score">
+                                <span id="completeness-score">0</span> / 20
+                            </div>
+                            <div class="quality-item-bar">
+                                <div id="completeness-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 15px;">
+                    <!-- 遮挡评估 -->
+                    <div class="col">
+                        <div class="quality-item">
+                            <div class="quality-item-title">
+                                <i class="fas fa-mask"></i> 无遮挡
+                            </div>
+                            <div class="quality-item-score">
+                                <span id="occlusion-score">0</span> / 20
+                            </div>
+                            <div class="quality-item-bar">
+                                <div id="occlusion-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="margin-top: 50px; text-align: center; padding: 20px; color: var(--text-dark);">
+        <div class="container">
+            <p>© 2025 苏州科技大学 | 天枢安防</p>
+        </div>
+    </footer>
+
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">正在加载，请稍候...</div>
+    </div>
+
+    <!-- JavaScript 部分 -->
+    <script>
+        // 显示加载动画
+        function showLoading(text = "正在加载，请稍候...") {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+        
+        // 切换标签页
+        function activateTab(tabId) {
+            // 隐藏所有标签页
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // 显示选中的标签页
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            
+            // 更新按钮样式
+            document.querySelectorAll('#btn-upload, #btn-camera, #btn-batch').forEach(btn => {
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+            });
+            
+            document.getElementById('btn-' + tabId).classList.remove('btn-primary');
+            document.getElementById('btn-' + tabId).classList.add('btn-success');
+        }
+        
+        // 当前人脸名称
+        let currentFaceName = '';
+        
+        // 创建人脸
+        document.getElementById('btn-create-face').addEventListener('click', function() {
+            const faceName = document.getElementById('face-name').value.trim();
+            
+            if (!faceName) {
+                alert('请输入人脸名称');
+                return;
+            }
+            
+            showLoading('正在创建人脸，请稍候...');
+            
+            // 发送请求
+            fetch('/api/create_face', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ face_name: faceName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.success) {
+                    // 更新当前人脸
+                    currentFaceName = faceName;
+                    document.getElementById('current-face-name').textContent = faceName;
+                    
+                    // 显示录入方式选择
+                    document.getElementById('enrollment-methods').style.display = 'block';
+                    
+                    // 默认显示上传图片标签页
+                    activateTab('upload');
+                    
+                    // 显示人脸质量评估卡片
+                    document.getElementById('face-quality-card').style.display = 'block';
+                    
+                    // 禁用创建人脸按钮和输入框
+                    document.getElementById('btn-create-face').disabled = true;
+                    document.getElementById('face-name').disabled = true;
+                    
+                    // 显示成功消息
+                    alert(data.message);
+                } else {
+                    alert('创建失败: ' + data.message);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                alert('请求失败: ' + error.message);
+            });
+        });
+        
+        // 图片上传预览
+        document.getElementById('upload-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            
+            // 启用添加按钮
+            document.getElementById('btn-add-face').disabled = false;
+            
+            // 显示预览图
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = document.getElementById('preview-image');
+                img.src = event.target.result;
+                img.style.display = 'block';
+                document.getElementById('image-placeholder').style.display = 'none';
+                
+                // 检测图像中的人脸
+                detectFaceInImage(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // 检测图像中的人脸
+        function detectFaceInImage(imageData) {
+            const detectionResult = document.getElementById('face-detection-result');
+            const detectionMessage = document.getElementById('detection-message');
+            
+            // 创建图像对象
+            const img = new Image();
+            img.onload = function() {
+                // 简单的质量评估
+                evaluateImageQuality(img);
+                
+                // 显示加载中
+                detectionResult.style.display = 'block';
+                detectionMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在检测人脸...';
+                
+                // 发送到服务器进行检测
+                fetch('/api/recognize_frame', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image: imageData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const faceCount = data.results.length;
+                        
+                        if (faceCount === 0) {
+                            detectionMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 未检测到人脸，请重新选择图片';
+                            detectionResult.querySelector('.alert').className = 'alert alert-warning';
+                            document.getElementById('btn-add-face').disabled = true;
+                        } else if (faceCount > 1) {
+                            detectionMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 检测到多个人脸 (${faceCount})，请提供只有一个人脸的图像`;
+                            detectionResult.querySelector('.alert').className = 'alert alert-warning';
+                            document.getElementById('btn-add-face').disabled = true;
+                        } else {
+                            detectionMessage.innerHTML = '<i class="fas fa-check-circle"></i> 成功检测到1个人脸，可以添加';
+                            detectionResult.querySelector('.alert').className = 'alert alert-success';
+                            document.getElementById('btn-add-face').disabled = false;
+                        }
+                    } else {
+                        detectionMessage.innerHTML = '<i class="fas fa-times-circle"></i> 检测失败: ' + data.message;
+                        detectionResult.querySelector('.alert').className = 'alert alert-danger';
+                        document.getElementById('btn-add-face').disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    detectionMessage.innerHTML = '<i class="fas fa-times-circle"></i> 请求失败: ' + error.message;
+                    detectionResult.querySelector('.alert').className = 'alert alert-danger';
+                    document.getElementById('btn-add-face').disabled = true;
+                });
+            };
+            img.src = imageData;
+        }
+        
+        // 添加人脸图像
+        document.getElementById('btn-add-face').addEventListener('click', function() {
+            const fileInput = document.getElementById('upload-image');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('请先选择图片');
+                return;
+            }
+            
+            if (!currentFaceName) {
+                alert('请先创建人脸');
+                return;
+            }
+            
+            showLoading('正在添加人脸，请稍候...');
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('face_name', currentFaceName);
+            formData.append('image', file);
+            
+            // 发送请求
+            fetch('/api/add_face_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.success) {
+                    alert('添加成功: ' + data.message);
+                    
+                    // 清空文件输入
+                    fileInput.value = '';
+                    
+                    // 清空预览
+                    document.getElementById('preview-image').style.display = 'none';
+                    document.getElementById('image-placeholder').style.display = 'flex';
+                    
+                    // 隐藏检测结果
+                    document.getElementById('face-detection-result').style.display = 'none';
+                    
+                    // 禁用添加按钮
+                    document.getElementById('btn-add-face').disabled = true;
+                } else {
+                    alert('添加失败: ' + data.message);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                alert('请求失败: ' + error.message);
+            });
+        });
+        
+        // 摄像头功能
+        let cameraStream = null;
+        
+        // 开启摄像头
+        document.getElementById('btn-start-camera').addEventListener('click', function() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                showLoading('正在开启摄像头，请稍候...');
+                
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        hideLoading();
+                        
+                        // 保存流引用
+                        cameraStream = stream;
+                        
+                        // 更新UI
+                        document.getElementById('btn-start-camera').style.display = 'none';
+                        document.getElementById('btn-stop-camera').style.display = 'inline-block';
+                        document.getElementById('camera-placeholder').style.display = 'none';
+                        document.getElementById('btn-capture').disabled = false;
+                        
+                        // 显示视频
+                        const video = document.getElementById('camera-video');
+                        video.srcObject = stream;
+                        video.style.display = 'block';
+                        
+                        // 开始渲染视频帧
+                        video.onloadedmetadata = function() {
+                            video.play();
+                            renderCameraFrame();
+                        };
+                    })
+                    .catch(function(error) {
+                        hideLoading();
+                        console.error('无法访问摄像头:', error);
+                        alert('无法访问摄像头: ' + error.message);
+                    });
+            } else {
+                alert('您的浏览器不支持摄像头访问');
+            }
+        });
+        
+        // 停止摄像头
+        document.getElementById('btn-stop-camera').addEventListener('click', function() {
+            stopCamera();
+        });
+        
+        // 渲染摄像头视频帧
+        function renderCameraFrame() {
+            if (!cameraStream) return;
+            
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置画布尺寸
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // 绘制视频帧到画布
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 循环渲染
+            requestAnimationFrame(renderCameraFrame);
+        }
+        
+        // 拍照
+        document.getElementById('btn-capture').addEventListener('click', function() {
+            if (!cameraStream) {
+                alert('请先开启摄像头');
+                return;
+            }
+            
+            if (!currentFaceName) {
+                alert('请先创建人脸');
+                return;
+            }
+            
+            const video = document.getElementById('camera-video');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置画布尺寸
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // 绘制视频帧到画布
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 获取图像数据
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // 检测人脸
+            showLoading('正在检测人脸，请稍候...');
+            
+            fetch('/api/recognize_frame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const faceCount = data.results.length;
+                    const detectionResult = document.getElementById('camera-detection-result');
+                    const detectionMessage = document.getElementById('camera-detection-message');
+                    
+                    detectionResult.style.display = 'block';
+                    
+                    if (faceCount === 0) {
+                        hideLoading();
+                        detectionMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 未检测到人脸，请调整姿势后重试';
+                        detectionResult.querySelector('.alert').className = 'alert alert-warning';
+                    } else if (faceCount > 1) {
+                        hideLoading();
+                        detectionMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 检测到多个人脸 (${faceCount})，请确保画面中只有一个人脸`;
+                        detectionResult.querySelector('.alert').className = 'alert alert-warning';
+                    } else {
+                        // 添加人脸
+                        fetch('/api/add_face_from_camera', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ 
+                                face_name: currentFaceName, 
+                                image: imageData 
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            hideLoading();
+                            
+                            if (data.success) {
+                                detectionMessage.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                                detectionResult.querySelector('.alert').className = 'alert alert-success';
+                            } else {
+                                detectionMessage.innerHTML = '<i class="fas fa-times-circle"></i> 添加失败: ' + data.message;
+                                detectionResult.querySelector('.alert').className = 'alert alert-danger';
+                            }
+                        })
+                        .catch(error => {
+                            hideLoading();
+                            console.error('Error:', error);
+                            detectionMessage.innerHTML = '<i class="fas fa-times-circle"></i> 请求失败: ' + error.message;
+                            detectionResult.querySelector('.alert').className = 'alert alert-danger';
+                        });
+                    }
+                } else {
+                    hideLoading();
+                    const detectionResult = document.getElementById('camera-detection-result');
+                    const detectionMessage = document.getElementById('camera-detection-message');
+                    
+                    detectionResult.style.display = 'block';
+                    detectionMessage.innerHTML = '<i class="fas fa-times-circle"></i> 检测失败: ' + data.message;
+                    detectionResult.querySelector('.alert').className = 'alert alert-danger';
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                alert('请求失败: ' + error.message);
+            });
+        });
+        
+        // 停止摄像头
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            // 更新UI
+            document.getElementById('btn-start-camera').style.display = 'inline-block';
+            document.getElementById('btn-stop-camera').style.display = 'none';
+            document.getElementById('camera-placeholder').style.display = 'flex';
+            document.getElementById('camera-video').style.display = 'none';
+            document.getElementById('btn-capture').disabled = true;
+            document.getElementById('camera-detection-result').style.display = 'none';
+            
+            // 清除画布
+            const canvas = document.getElementById('camera-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 批量上传
+        document.getElementById('batch-upload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) {
+                return;
+            }
+            
+            // 启用上传按钮
+            document.getElementById('btn-batch-upload').disabled = false;
+            
+            // 更新计数
+            document.getElementById('total-count').textContent = files.length;
+            document.getElementById('uploaded-count').textContent = '0';
+            
+            // 显示进度条
+            document.getElementById('batch-progress-container').style.display = 'block';
+            document.getElementById('progress-inner').style.width = '0%';
+        });
+        
+        // 开始批量上传
+        document.getElementById('btn-batch-upload').addEventListener('click', function() {
+            const fileInput = document.getElementById('batch-upload');
+            const files = fileInput.files;
+            
+            if (!files || files.length === 0) {
+                alert('请先选择图片');
+                return;
+            }
+            
+            if (!currentFaceName) {
+                alert('请先创建人脸');
+                return;
+            }
+            
+            showLoading('正在准备上传，请稍候...');
+            
+            const totalFiles = files.length;
+            let uploadedCount = 0;
+            let successCount = 0;
+            let failedCount = 0;
+            
+            const successGrid = document.getElementById('success-grid');
+            const failedGrid = document.getElementById('failed-grid');
+            
+            // 清空网格
+            successGrid.innerHTML = '';
+            failedGrid.innerHTML = '';
+            
+            // 更新进度
+            function updateProgress() {
+                const progress = Math.round((uploadedCount / totalFiles) * 100);
+                document.getElementById('progress-inner').style.width = progress + '%';
+                document.getElementById('uploaded-count').textContent = uploadedCount;
+                
+                // 更新消息
+                document.getElementById('batch-message').innerHTML = 
+                    `已处理 ${uploadedCount}/${totalFiles} 张图片，成功 ${successCount} 张，失败 ${failedCount} 张`;
+            }
+            
+            // 隐藏加载动画
+            hideLoading();
+            
+            // 显示结果区域
+            document.getElementById('batch-result').style.display = 'block';
+            
+            // 按顺序上传文件
+            function uploadNextFile(index) {
+                if (index >= totalFiles) {
+                    // 所有文件处理完毕
+                    document.getElementById('batch-message').innerHTML = 
+                        `所有图片处理完成，成功 ${successCount} 张，失败 ${failedCount} 张`;
+                    return;
+                }
+                
+                const file = files[index];
+                const formData = new FormData();
+                formData.append('face_name', currentFaceName);
+                formData.append('image', file);
+                
+                // 发送请求
+                fetch('/api/add_face_image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    uploadedCount++;
+                    
+                    // 创建缩略图
+                    const thumbnail = document.createElement('div');
+                    thumbnail.style.position = 'relative';
+                    thumbnail.style.height = '100px';
+                    thumbnail.style.borderRadius = '5px';
+                    thumbnail.style.overflow = 'hidden';
+                    
+                    // 创建缩略图背景
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        thumbnail.style.backgroundImage = `url('${e.target.result}')`;
+                        thumbnail.style.backgroundSize = 'cover';
+                        thumbnail.style.backgroundPosition = 'center';
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    if (data.success) {
+                        successCount++;
+                        // 添加成功标志
+                        const badge = document.createElement('div');
+                        badge.style.position = 'absolute';
+                        badge.style.bottom = '0';
+                        badge.style.right = '0';
+                        badge.style.background = 'rgba(0, 206, 137, 0.8)';
+                        badge.style.color = 'white';
+                        badge.style.padding = '2px 5px';
+                        badge.style.fontSize = '0.8rem';
+                        badge.style.borderRadius = '3px 0 0 0';
+                        badge.innerHTML = '<i class="fas fa-check"></i>';
+                        
+                        thumbnail.appendChild(badge);
+                        successGrid.appendChild(thumbnail);
+                    } else {
+                        failedCount++;
+                        // 添加失败标志
+                        const badge = document.createElement('div');
+                        badge.style.position = 'absolute';
+                        badge.style.bottom = '0';
+                        badge.style.right = '0';
+                        badge.style.background = 'rgba(255, 62, 95, 0.8)';
+                        badge.style.color = 'white';
+                        badge.style.padding = '2px 5px';
+                        badge.style.fontSize = '0.8rem';
+                        badge.style.borderRadius = '3px 0 0 0';
+                        badge.innerHTML = '<i class="fas fa-times"></i>';
+                        
+                        // 添加提示
+                        thumbnail.title = data.message;
+                        
+                        thumbnail.appendChild(badge);
+                        failedGrid.appendChild(thumbnail);
+                    }
+                    
+                    // 更新进度
+                    updateProgress();
+                    
+                    // 处理下一个文件
+                    uploadNextFile(index + 1);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    
+                    uploadedCount++;
+                    failedCount++;
+                    
+                    // 创建缩略图
+                    const thumbnail = document.createElement('div');
+                    thumbnail.style.position = 'relative';
+                    thumbnail.style.height = '100px';
+                    thumbnail.style.borderRadius = '5px';
+                    thumbnail.style.overflow = 'hidden';
+                    
+                    // 创建缩略图背景
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        thumbnail.style.backgroundImage = `url('${e.target.result}')`;
+                        thumbnail.style.backgroundSize = 'cover';
+                        thumbnail.style.backgroundPosition = 'center';
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    // 添加失败标志
+                    const badge = document.createElement('div');
+                    badge.style.position = 'absolute';
+                    badge.style.bottom = '0';
+                    badge.style.right = '0';
+                    badge.style.background = 'rgba(255, 62, 95, 0.8)';
+                    badge.style.color = 'white';
+                    badge.style.padding = '2px 5px';
+                    badge.style.fontSize = '0.8rem';
+                    badge.style.borderRadius = '3px 0 0 0';
+                    badge.innerHTML = '<i class="fas fa-times"></i>';
+                    
+                    // 添加提示
+                    thumbnail.title = '请求失败: ' + error.message;
+                    
+                    thumbnail.appendChild(badge);
+                    failedGrid.appendChild(thumbnail);
+                    
+                    // 更新进度
+                    updateProgress();
+                    
+                    // 处理下一个文件
+                    uploadNextFile(index + 1);
+                });
+            }
+            
+            // 开始上传第一个文件
+            uploadNextFile(0);
+        });
+        
+        // 质量评估功能
+        document.getElementById('toggle-quality-details').addEventListener('click', function() {
+            const detailsSection = document.getElementById('quality-details');
+            const button = document.getElementById('toggle-quality-details');
+            
+            if (detailsSection.style.display === 'none') {
+                detailsSection.style.display = 'block';
+                button.textContent = '隐藏详情';
+            } else {
+                detailsSection.style.display = 'none';
+                button.textContent = '显示详情';
+            }
+        });
+        
+        // 评估图像质量
+        function evaluateImageQuality(img) {
+            // 创建临时画布
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // 获取像素数据
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // 模拟评分计算
+            // 注意：这是简化版的质量评估，实际应用中需要更复杂的算法
+            
+            // 1. 亮度评估 (0-20分)
+            let totalBrightness = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                // 计算灰度值
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                totalBrightness += gray;
+            }
+            
+            const avgBrightness = totalBrightness / (data.length / 4);
+            // 理想亮度在100-150之间
+            const brightnessScore = 20 - Math.min(20, Math.abs(avgBrightness - 125) / 5);
+            
+            // 2. 清晰度评估 (使用简化的边缘检测) (0-20分)
+            // 实际项目中应使用更复杂的算法，如拉普拉斯算子
+            let edgeCount = 0;
+            for (let y = 1; y < canvas.height - 1; y++) {
+                for (let x = 1; x < canvas.width - 1; x++) {
+                    const idx = (y * canvas.width + x) * 4;
+                    const idxLeft = (y * canvas.width + (x - 1)) * 4;
+                    const idxRight = (y * canvas.width + (x + 1)) * 4;
+                    
+                    // 简单边缘检测
+                    const diffH = Math.abs(data[idx] - data[idxLeft]) + 
+                                 Math.abs(data[idx + 1] - data[idxLeft + 1]) + 
+                                 Math.abs(data[idx + 2] - data[idxLeft + 2]);
+                    
+                    const diffV = Math.abs(data[idx] - data[idxRight]) + 
+                                 Math.abs(data[idx + 1] - data[idxRight + 1]) + 
+                                 Math.abs(data[idx + 2] - data[idxRight + 2]);
+                    
+                    if (diffH > 100 || diffV > 100) {
+                        edgeCount++;
+                    }
+                }
+            }
+            
+            const edgeRatio = edgeCount / (canvas.width * canvas.height);
+            const clarityScore = Math.min(20, edgeRatio * 1000);
+            
+            // 3. 姿态评估 (假设为中等分数) (0-20分)
+            const poseScore = 15;
+            
+            // 4. 完整度评估 (基于图像尺寸) (0-20分)
+            const minSize = Math.min(canvas.width, canvas.height);
+            const completenessScore = Math.min(20, minSize / 20);
+            
+            // 5. 遮挡评估 (假设为中等分数) (0-20分)
+            const occlusionScore = 18;
+            
+            // 总分
+            const totalScore = Math.round(
+                brightnessScore + 
+                clarityScore + 
+                poseScore + 
+                completenessScore + 
+                occlusionScore
+            );
+            
+            // 更新UI
+            document.getElementById('quality-score-value').textContent = totalScore;
+            document.getElementById('quality-bar-inner').style.width = totalScore + '%';
+            
+            document.getElementById('brightness-score').textContent = Math.round(brightnessScore);
+            document.getElementById('brightness-bar').style.width = (brightnessScore / 20 * 100) + '%';
+            
+            document.getElementById('clarity-score').textContent = Math.round(clarityScore);
+            document.getElementById('clarity-bar').style.width = (clarityScore / 20 * 100) + '%';
+            
+            document.getElementById('pose-score').textContent = Math.round(poseScore);
+            document.getElementById('pose-bar').style.width = (poseScore / 20 * 100) + '%';
+            
+            document.getElementById('completeness-score').textContent = Math.round(completenessScore);
+            document.getElementById('completeness-bar').style.width = (completenessScore / 20 * 100) + '%';
+            
+            document.getElementById('occlusion-score').textContent = Math.round(occlusionScore);
+            document.getElementById('occlusion-bar').style.width = (occlusionScore / 20 * 100) + '%';
+            
+            // 更新建议
+            const tip = document.getElementById('quality-tip');
+            if (totalScore >= 80) {
+                tip.innerHTML = '<i class="fas fa-check-circle"></i> 图像质量优秀，非常适合人脸识别';
+                document.getElementById('quality-suggestion').className = 'alert alert-success';
+            } else if (totalScore >= 60) {
+                tip.innerHTML = '<i class="fas fa-info-circle"></i> 图像质量良好，可以使用';
+                document.getElementById('quality-suggestion').className = 'alert alert-info';
+            } else if (totalScore >= 40) {
+                tip.innerHTML = '<i class="fas fa-exclamation-circle"></i> 图像质量一般，建议改善';
+                document.getElementById('quality-suggestion').className = 'alert alert-warning';
+            } else {
+                tip.innerHTML = '<i class="fas fa-times-circle"></i> 图像质量较差，不建议使用';
+                document.getElementById('quality-suggestion').className = 'alert alert-danger';
+            }
+        }
+        
+        // 样式优化
+        document.querySelectorAll('.quality-item').forEach(item => {
+            item.style.marginBottom = '10px';
+        });
+        
+        document.querySelectorAll('.quality-item-title').forEach(title => {
+            title.style.marginBottom = '5px';
+            title.style.fontWeight = '500';
+        });
+        
+        document.querySelectorAll('.quality-item-score').forEach(score => {
+            score.style.color = 'var(--text-dark)';
+            score.style.fontSize = '0.9rem';
+            score.style.marginBottom = '5px';
+        });
+        
+        document.querySelectorAll('.quality-item-bar').forEach(bar => {
+            bar.style.height = '8px';
+            bar.style.background = 'rgba(0, 30, 60, 0.5)';
+            bar.style.borderRadius = '4px';
+            bar.style.overflow = 'hidden';
+        });
+        
+        document.querySelectorAll('.quality-item-bar > div').forEach(innerBar => {
+            innerBar.style.height = '100%';
+            innerBar.style.background = 'linear-gradient(90deg, var(--primary-color), var(--primary-light))';
+            innerBar.style.transition = 'width 0.3s ease';
+        });
+        
+        // 页面卸载时释放资源
+        window.addEventListener('beforeunload', function() {
+            stopCamera();
+        });
+    </script>
+</body>
+</html> 

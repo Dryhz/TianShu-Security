@@ -1,0 +1,29 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="8" y1="12" x2="40" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A855F7" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#9333EA" stop-opacity="0.4"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-4" y="-4" width="56" height="56" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+    <filter id="glow" x="-8" y="-8" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#A855F7" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g filter="url(#filter0_b)">
+    <path d="M8 15C8 13.8954 8.89543 13 10 13H20L24 17H38C39.1046 17 40 17.8954 40 19V33C40 34.1046 39.1046 35 38 35H10C8.89543 35 8 34.1046 8 33V15Z" fill="url(#paint0_linear)" fill-opacity="0.15"/>
+    <path d="M8.5 15C8.5 14.1716 9.17157 13.5 10 13.5H19.7929L23.7929 17.5H38C38.8284 17.5 39.5 18.1716 39.5 19V33C39.5 33.8284 38.8284 34.5 38 34.5H10C9.17157 34.5 8.5 33.8284 8.5 33V15Z" stroke="white" stroke-opacity="0.2"/>
+  </g>
+  <g filter="url(#glow)">
+    <!-- 添加 + 号 -->
+    <circle cx="32" cy="24" r="6" fill="#A855F7" fill-opacity="0.2" stroke="white" stroke-opacity="0.4"/>
+    <path d="M32 21V27M29 24H35" stroke="white" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+</svg> 

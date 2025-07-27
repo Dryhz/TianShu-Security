@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人脸管理 - 智能人脸识别系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                <i class="fas fa-microchip"></i> 智能人脸识别系统
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('recognition') }}" class="nav-link">人脸识别</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('enrollment') }}" class="nav-link">人脸录入</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('management') }}" class="nav-link active">人脸管理</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="container">
+        <h1 style="margin-top: 30px; text-align: center;">人脸管理</h1>
+        <p style="text-align: center; margin-bottom: 30px;">
+            管理系统中的人脸数据
+        </p>
+
+        <!-- 统计概览卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>人脸数据统计</h3>
+                <button class="btn btn-primary btn-sm" id="btn-refresh">
+                    <i class="fas fa-sync-alt"></i> 刷新数据
+                </button>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col">
+                    <div class="stat-box" style="
+                        text-align: center;
+                        padding: 20px;
+                        background: rgba(0, 30, 60, 0.5);
+                        border-radius: 8px;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <i class="fas fa-users" style="font-size: 2.5rem; color: var(--primary-light); margin-bottom: 10px;"></i>
+                        <div class="stat-title" style="color: var(--text-dark); margin-bottom: 5px;">总人脸数</div>
+                        <div class="stat-value" id="total-faces" style="font-size: 2rem; font-weight: bold; color: var(--primary-light);">0</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-box" style="
+                        text-align: center;
+                        padding: 20px;
+                        background: rgba(0, 30, 60, 0.5);
+                        border-radius: 8px;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <i class="fas fa-image" style="font-size: 2.5rem; color: var(--primary-light); margin-bottom: 10px;"></i>
+                        <div class="stat-title" style="color: var(--text-dark); margin-bottom: 5px;">总照片数</div>
+                        <div class="stat-value" id="total-images" style="font-size: 2rem; font-weight: bold; color: var(--primary-light);">0</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-box" style="
+                        text-align: center;
+                        padding: 20px;
+                        background: rgba(0, 30, 60, 0.5);
+                        border-radius: 8px;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <i class="fas fa-calendar-alt" style="font-size: 2.5rem; color: var(--primary-light); margin-bottom: 10px;"></i>
+                        <div class="stat-title" style="color: var(--text-dark); margin-bottom: 5px;">最近更新</div>
+                        <div class="stat-value" id="last-update" style="font-size: 1.2rem; font-weight: bold; color: var(--primary-light);">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索和筛选工具栏 -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-header">
+                <h3>搜索和筛选</h3>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col" style="flex: 2;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <div class="search-box" style="position: relative;">
+                            <input type="text" id="search-input" class="form-control" placeholder="搜索人脸名称...">
+                            <i class="fas fa-search" style="position: absolute; right: 15px; top: 12px; color: var(--text-dark);"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="flex: 1;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="sort-select" class="form-control">
+                            <option value="name_asc">按名称升序</option>
+                            <option value="name_desc">按名称降序</option>
+                            <option value="count_asc">按照片数升序</option>
+                            <option value="count_desc" selected>按照片数降序</option>
+                            <option value="time_asc">按时间升序</option>
+                            <option value="time_desc">按时间降序</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人脸数据列表 -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-header">
+                <h3>人脸数据列表</h3>
+                <div class="face-count">共 <span id="visible-faces">0</span> 个人脸</div>
+            </div>
+            <div id="face-list-container" style="margin-top: 20px;">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 15%;">预览</th>
+                                <th style="width: 25%;">人脸名称</th>
+                                <th style="width: 15%;">照片数量</th>
+                                <th style="width: 25%;">创建时间</th>
+                                <th style="width: 15%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="face-list">
+                            <!-- 数据将通过JavaScript动态添加 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-data-message" style="
+                    text-align: center;
+                    padding: 40px;
+                    color: var(--text-dark);
+                    display: none;
+                ">
+                    <i class="fas fa-database" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <p>暂无人脸数据，请先添加人脸</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创新功能：人脸详情模态框 -->
+        <div id="face-details-modal" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(5px);
+        ">
+            <div class="modal-dialog" style="
+                max-width: 800px;
+                margin: 50px auto;
+                background: var(--card-bg);
+                border-radius: 10px;
+                box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+                position: relative;
+            ">
+                <div class="modal-header" style="
+                    padding: 20px;
+                    border-bottom: 1px solid var(--border-color);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                ">
+                    <h3 id="modal-title" style="margin: 0;">人脸详情</h3>
+                    <button id="btn-close-modal" style="
+                        background: none;
+                        border: none;
+                        color: var(--text-light);
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                    ">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <div class="row">
+                        <div class="col" style="flex: 0 0 30%;">
+                            <div id="face-main-preview" style="
+                                width: 100%;
+                                padding-top: 100%;
+                                background-size: cover;
+                                background-position: center;
+                                border-radius: 10px;
+                                border: 2px solid var(--border-color);
+                                margin-bottom: 20px;
+                            "></div>
+                            <div class="face-info">
+                                <div class="info-item" style="margin-bottom: 15px;">
+                                    <div class="info-label" style="color: var(--text-dark); margin-bottom: 5px;">人脸名称</div>
+                                    <div id="detail-face-name" class="info-value" style="font-weight: 600; color: var(--primary-light);"></div>
+                                </div>
+                                <div class="info-item" style="margin-bottom: 15px;">
+                                    <div class="info-label" style="color: var(--text-dark); margin-bottom: 5px;">照片数量</div>
+                                    <div id="detail-image-count" class="info-value" style="font-weight: 600; color: var(--primary-light);"></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label" style="color: var(--text-dark); margin-bottom: 5px;">创建时间</div>
+                                    <div id="detail-create-time" class="info-value" style="font-weight: 600; color: var(--primary-light);"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" style="flex: 0 0 70%;">
+                            <h4 style="margin-top: 0; margin-bottom: 15px;">照片集</h4>
+                            <div id="face-images-grid" style="
+                                display: grid;
+                                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                                gap: 10px;
+                                max-height: 400px;
+                                overflow-y: auto;
+                                padding-right: 10px;
+                            ">
+                                <!-- 照片集将通过JavaScript动态添加 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="
+                    padding: 15px 20px;
+                    border-top: 1px solid var(--border-color);
+                    display: flex;
+                    justify-content: space-between;
+                ">
+                    <button id="btn-delete-face" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> 删除人脸
+                    </button>
+                    <button id="btn-add-more" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 添加更多照片
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创新功能：数据统计卡片 -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-header">
+                <h3>数据分析</h3>
+                <div class="chart-toggle">
+                    <button class="btn btn-sm btn-primary active" id="btn-chart-1">照片分布</button>
+                    <button class="btn btn-sm btn-primary" id="btn-chart-2">时间分布</button>
+                </div>
+            </div>
+            <div id="chart-container" style="height: 300px; margin-top: 20px; position: relative;">
+                <!-- 这里是图表容器，我们使用Canvas绘制简单图表 -->
+                <canvas id="chart-canvas" style="width: 100%; height: 100%;"></canvas>
+                <div id="chart-placeholder" style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    color: var(--text-dark);
+                ">
+                    <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>加载中，请稍候...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="margin-top: 50px; text-align: center; padding: 20px; color: var(--text-dark);">
+        <div class="container">
+            <p>© 2025 苏州科技大学 | 天枢安防</p>
+        </div>
+    </footer>
+
+    <!-- 确认删除模态框 -->
+    <div id="confirm-modal" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1100;
+        display: none;
+        backdrop-filter: blur(5px);
+    ">
+        <div class="modal-dialog" style="
+            max-width: 400px;
+            margin: 150px auto;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        ">
+            <div class="modal-header" style="
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+            ">
+                <h3 style="margin: 0;">确认删除</h3>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p>您确定要删除人脸 <span id="delete-face-name" style="color: var(--danger-color); font-weight: bold;"></span> 吗？</p>
+                <p>此操作将永久删除该人脸的所有数据，且不可恢复！</p>
+            </div>
+            <div class="modal-footer" style="
+                padding: 15px 20px;
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: flex-end;
+            ">
+                <button id="btn-cancel-delete" class="btn btn-secondary" style="margin-right: 10px;">
+                    取消
+                </button>
+                <button id="btn-confirm-delete" class="btn btn-danger">
+                    确认删除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载动画 -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">正在加载，请稍候...</div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 显示加载动画
+        function showLoading(text = "正在加载，请稍候...") {
+            document.getElementById('loading-text').innerText = text;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+        
+        // 当前人脸数据
+        let faceData = [];
+        let currentFace = null;
+        
+        // 页面加载完成后获取人脸数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFaceData();
+        });
+        
+        // 加载人脸数据
+        function loadFaceData() {
+            showLoading('正在加载人脸数据...');
+            
+            fetch('/api/get_face_database')
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    
+                    if (data.success) {
+                        faceData = data.faces;
+                        
+                        // 更新统计信息
+                        updateStatistics();
+                        
+                        // 显示人脸列表
+                        renderFaceList();
+                        
+                        // 绘制图表
+                        drawChart1();
+                    } else {
+                        alert('加载人脸数据失败: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error('Error:', error);
+                    alert('请求失败: ' + error.message);
+                });
+        }
+        
+        // 更新统计信息
+        function updateStatistics() {
+            const totalFaces = faceData.length;
+            let totalImages = 0;
+            let lastUpdate = '';
+            
+            faceData.forEach(face => {
+                totalImages += face.image_count;
+                
+                // 获取最新更新时间
+                if (!lastUpdate || new Date(face.time) > new Date(lastUpdate)) {
+                    lastUpdate = face.time;
+                }
+            });
+            
+            // 更新UI
+            document.getElementById('total-faces').textContent = totalFaces;
+            document.getElementById('total-images').textContent = totalImages;
+            document.getElementById('last-update').textContent = lastUpdate || '--';
+            document.getElementById('visible-faces').textContent = totalFaces;
+        }
+        
+        // 渲染人脸列表
+        function renderFaceList() {
+            const tbody = document.getElementById('face-list');
+            const noDataMessage = document.getElementById('no-data-message');
+            
+            // 清空列表
+            tbody.innerHTML = '';
+            
+            if (faceData.length === 0) {
+                // 显示无数据提示
+                noDataMessage.style.display = 'flex';
+                return;
+            }
+            
+            // 隐藏无数据提示
+            noDataMessage.style.display = 'none';
+            
+            // 应用排序
+            const sortedData = sortFaceData([...faceData]);
+            
+            // 应用搜索过滤
+            const filteredData = filterFaceData(sortedData);
+            
+            // 更新可见人脸数
+            document.getElementById('visible-faces').textContent = filteredData.length;
+            
+            // 渲染列表
+            filteredData.forEach((face, index) => {
+                const row = document.createElement('tr');
+                
+                // 序号列
+                const cellIndex = document.createElement('td');
+                cellIndex.textContent = index + 1;
+                
+                // 预览图列
+                const cellPreview = document.createElement('td');
+                const previewContainer = document.createElement('div');
+                previewContainer.style.width = '60px';
+                previewContainer.style.height = '60px';
+                previewContainer.style.borderRadius = '5px';
+                previewContainer.style.overflow = 'hidden';
+                previewContainer.style.backgroundImage = `url('/face_image/${face.preview}')`;
+                previewContainer.style.backgroundSize = 'cover';
+                previewContainer.style.backgroundPosition = 'center';
+                previewContainer.style.cursor = 'pointer';
+                previewContainer.title = '点击查看详情';
+                previewContainer.onclick = () => showFaceDetails(face);
+                cellPreview.appendChild(previewContainer);
+                
+                // 人脸名称列
+                const cellName = document.createElement('td');
+                cellName.textContent = face.name;
+                cellName.style.cursor = 'pointer';
+                cellName.title = '点击查看详情';
+                cellName.onclick = () => showFaceDetails(face);
+                
+                // 照片数量列
+                const cellCount = document.createElement('td');
+                cellCount.textContent = face.image_count;
+                
+                // 创建时间列
+                const cellTime = document.createElement('td');
+                cellTime.textContent = face.time;
+                
+                // 操作列
+                const cellAction = document.createElement('td');
+                
+                // 查看按钮
+                const btnView = document.createElement('button');
+                btnView.className = 'btn btn-sm btn-primary';
+                btnView.innerHTML = '<i class="fas fa-eye"></i>';
+                btnView.style.marginRight = '5px';
+                btnView.title = '查看详情';
+                btnView.onclick = () => showFaceDetails(face);
+                cellAction.appendChild(btnView);
+                
+                // 删除按钮
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn btn-sm btn-danger';
+                btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                btnDelete.title = '删除';
+                btnDelete.onclick = () => showDeleteConfirm(face);
+                cellAction.appendChild(btnDelete);
+                
+                // 添加到行
+                row.appendChild(cellIndex);
+                row.appendChild(cellPreview);
+                row.appendChild(cellName);
+                row.appendChild(cellCount);
+                row.appendChild(cellTime);
+                row.appendChild(cellAction);
+                
+                // 添加到表格
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 排序人脸数据
+        function sortFaceData(data) {
+            const sortType = document.getElementById('sort-select').value;
+            
+            switch (sortType) {
+                case 'name_asc':
+                    return data.sort((a, b) => a.name.localeCompare(b.name));
+                case 'name_desc':
+                    return data.sort((a, b) => b.name.localeCompare(a.name));
+                case 'count_asc':
+                    return data.sort((a, b) => a.image_count - b.image_count);
+                case 'count_desc':
+                    return data.sort((a, b) => b.image_count - a.image_count);
+                case 'time_asc':
+                    return data.sort((a, b) => new Date(a.time) - new Date(b.time));
+                case 'time_desc':
+                    return data.sort((a, b) => new Date(b.time) - new Date(a.time));
+                default:
+                    return data;
+            }
+        }
+        
+        // 过滤人脸数据
+        function filterFaceData(data) {
+            const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
+            
+            if (!searchTerm) {
+                return data;
+            }
+            
+            return data.filter(face => 
+                face.name.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        // 显示人脸详情
+        function showFaceDetails(face) {
+            currentFace = face;
+            
+            // 更新模态框内容
+            document.getElementById('modal-title').textContent = `${face.name} 的详情`;
+            document.getElementById('face-main-preview').style.backgroundImage = `url('/face_image/${face.preview}')`;
+            document.getElementById('detail-face-name').textContent = face.name;
+            document.getElementById('detail-image-count').textContent = face.image_count;
+            document.getElementById('detail-create-time').textContent = face.time;
+            
+            // 清空照片网格
+            const grid = document.getElementById('face-images-grid');
+            grid.innerHTML = '';
+            
+            // 添加加载提示
+            const loadingItem = document.createElement('div');
+            loadingItem.style.gridColumn = '1 / -1';
+            loadingItem.style.textAlign = 'center';
+            loadingItem.style.padding = '20px';
+            loadingItem.innerHTML = '<div class="spinner" style="width: 30px; height: 30px;"></div><div style="margin-top: 10px;">正在加载照片...</div>';
+            grid.appendChild(loadingItem);
+            
+            // 显示模态框
+            document.getElementById('face-details-modal').style.display = 'block';
+            
+            // 模拟加载照片集
+            // 在实际应用中，这里应该发送请求获取照片列表
+            setTimeout(() => {
+                // 清空网格
+                grid.innerHTML = '';
+                
+                // 添加预览图
+                for (let i = 0; i < face.image_count; i++) {
+                    const imageItem = document.createElement('div');
+                    imageItem.style.position = 'relative';
+                    imageItem.style.paddingTop = '100%';
+                    imageItem.style.backgroundColor = 'rgba(0, 30, 60, 0.5)';
+                    imageItem.style.backgroundImage = `url('/face_image/${face.preview}')`;
+                    imageItem.style.backgroundSize = 'cover';
+                    imageItem.style.backgroundPosition = 'center';
+                    imageItem.style.borderRadius = '5px';
+                    imageItem.style.cursor = 'pointer';
+                    
+                    // 添加悬停效果
+                    imageItem.onmouseover = function() {
+                        this.style.transform = 'scale(1.05)';
+                        this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
+                        this.style.transition = 'all 0.2s ease';
+                    };
+                    
+                    imageItem.onmouseout = function() {
+                        this.style.transform = 'scale(1)';
+                        this.style.boxShadow = 'none';
+                    };
+                    
+                    grid.appendChild(imageItem);
+                }
+            }, 1000);
+        }
+        
+        // 关闭详情模态框
+        document.getElementById('btn-close-modal').addEventListener('click', function() {
+            document.getElementById('face-details-modal').style.display = 'none';
+            currentFace = null;
+        });
+        
+        // 添加更多照片
+        document.getElementById('btn-add-more').addEventListener('click', function() {
+            if (!currentFace) return;
+            
+            document.getElementById('face-details-modal').style.display = 'none';
+            
+            // 跳转到人脸录入页面并传递人脸名称
+            window.location.href = `/enrollment?face=${encodeURIComponent(currentFace.name)}`;
+        });
+        
+        // 显示删除确认
+        function showDeleteConfirm(face) {
+            currentFace = face;
+            
+            // 更新确认框内容
+            document.getElementById('delete-face-name').textContent = face.name;
+            
+            // 显示确认框
+            document.getElementById('confirm-modal').style.display = 'block';
+        }
+        
+        // 取消删除
+        document.getElementById('btn-cancel-delete').addEventListener('click', function() {
+            document.getElementById('confirm-modal').style.display = 'none';
+            currentFace = null;
+        });
+        
+        // 确认删除
+        document.getElementById('btn-confirm-delete').addEventListener('click', function() {
+            if (!currentFace) return;
+            
+            showLoading('正在删除人脸...');
+            
+            fetch('/api/delete_face', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ face_name: currentFace.name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                
+                // 关闭确认框
+                document.getElementById('confirm-modal').style.display = 'none';
+                
+                // 关闭详情模态框（如果打开）
+                document.getElementById('face-details-modal').style.display = 'none';
+                
+                if (data.success) {
+                    alert('删除成功: ' + data.message);
+                    
+                    // 重新加载人脸数据
+                    loadFaceData();
+                } else {
+                    alert('删除失败: ' + data.message);
+                }
+                
+                currentFace = null;
+            })
+            .catch(error => {
+                hideLoading();
+                document.getElementById('confirm-modal').style.display = 'none';
+                console.error('Error:', error);
+                alert('请求失败: ' + error.message);
+                currentFace = null;
+            });
+        });
+        
+        // 刷新按钮
+        document.getElementById('btn-refresh').addEventListener('click', function() {
+            loadFaceData();
+        });
+        
+        // 搜索输入框
+        document.getElementById('search-input').addEventListener('input', function() {
+            renderFaceList();
+        });
+        
+        // 排序选择框
+        document.getElementById('sort-select').addEventListener('change', function() {
+            renderFaceList();
+        });
+        
+        // 绘制照片分布图表
+        function drawChart1() {
+            const canvas = document.getElementById('chart-canvas');
+            const ctx = canvas.getContext('2d');
+            const placeholder = document.getElementById('chart-placeholder');
+            
+            // 隐藏占位符
+            placeholder.style.display = 'none';
+            
+            // 设置画布大小
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (faceData.length === 0) {
+                // 显示无数据提示
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('暂无数据', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            // 准备数据
+            const sortedData = [...faceData].sort((a, b) => b.image_count - a.image_count);
+            const topFaces = sortedData.slice(0, 10); // 只显示前10个
+            
+            const names = topFaces.map(face => face.name);
+            const counts = topFaces.map(face => face.image_count);
+            
+            // 设置图表参数
+            const barWidth = Math.min(40, (canvas.width - 100) / counts.length);
+            const barSpacing = 20;
+            const maxBarHeight = canvas.height - 60;
+            const maxCount = Math.max(...counts);
+            const barColors = [
+                'rgba(0, 183, 255, 0.7)',
+                'rgba(0, 220, 255, 0.7)',
+                'rgba(0, 255, 220, 0.7)',
+                'rgba(0, 255, 183, 0.7)',
+                'rgba(0, 220, 255, 0.7)',
+                'rgba(0, 183, 255, 0.7)',
+                'rgba(0, 150, 255, 0.7)',
+                'rgba(0, 120, 255, 0.7)',
+                'rgba(0, 90, 255, 0.7)',
+                'rgba(0, 60, 255, 0.7)'
+            ];
+            
+            // 绘制坐标轴
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(50, 10);
+            ctx.lineTo(50, canvas.height - 30);
+            ctx.lineTo(canvas.width - 10, canvas.height - 30);
+            ctx.stroke();
+            
+            // 绘制标签
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('照片数量', 20, canvas.height / 2);
+            ctx.fillText('人脸', canvas.width / 2, canvas.height - 10);
+            
+            // 绘制柱状图
+            for (let i = 0; i < counts.length; i++) {
+                const barHeight = (counts[i] / maxCount) * maxBarHeight;
+                const x = 70 + i * (barWidth + barSpacing);
+                const y = canvas.height - 30 - barHeight;
+                
+                // 绘制柱子
+                ctx.fillStyle = barColors[i % barColors.length];
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // 添加边框
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, barWidth, barHeight);
+                
+                // 添加数值标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.textAlign = 'center';
+                ctx.fillText(counts[i], x + barWidth / 2, y - 5);
+                
+                // 添加名称标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fillText(names[i].length > 6 ? names[i].substring(0, 6) + '...' : names[i], x + barWidth / 2, canvas.height - 15);
+            }
+        }
+        
+        // 绘制时间分布图表
+        function drawChart2() {
+            const canvas = document.getElementById('chart-canvas');
+            const ctx = canvas.getContext('2d');
+            const placeholder = document.getElementById('chart-placeholder');
+            
+            // 隐藏占位符
+            placeholder.style.display = 'none';
+            
+            // 设置画布大小
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (faceData.length === 0) {
+                // 显示无数据提示
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('暂无数据', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            // 准备数据 - 按月份分组
+            const timeData = {};
+            faceData.forEach(face => {
+                const date = new Date(face.time);
+                const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                if (!timeData[monthYear]) {
+                    timeData[monthYear] = 0;
+                }
+                
+                timeData[monthYear]++;
+            });
+            
+            // 转换为数组并排序
+            const timeEntries = Object.entries(timeData).sort((a, b) => a[0].localeCompare(b[0]));
+            const months = timeEntries.map(entry => entry[0]);
+            const counts = timeEntries.map(entry => entry[1]);
+            
+            // 设置图表参数
+            const lineColor = 'rgba(0, 183, 255, 0.8)';
+            const areaColor = 'rgba(0, 183, 255, 0.2)';
+            const pointColor = 'rgba(0, 220, 255, 1)';
+            const maxCount = Math.max(...counts);
+            const padding = 50;
+            
+            // 计算坐标转换
+            const xScale = (canvas.width - padding * 2) / (months.length - 1 || 1);
+            const yScale = (canvas.height - padding * 2) / maxCount;
+            
+            // 绘制坐标轴
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding / 2);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding / 2, canvas.height - padding);
+            ctx.stroke();
+            
+            // 绘制网格线
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // 水平网格线
+            for (let i = 0; i <= maxCount; i += Math.ceil(maxCount / 5)) {
+                const y = canvas.height - padding - i * yScale;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding / 2, y);
+                ctx.stroke();
+                
+                // 添加刻度标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'right';
+                ctx.fillText(i, padding - 10, y + 4);
+            }
+            
+            // 垂直网格线
+            for (let i = 0; i < months.length; i++) {
+                const x = padding + i * xScale;
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height - padding);
+                ctx.lineTo(x, padding / 2);
+                ctx.stroke();
+                
+                // 添加刻度标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                // 只显示部分月份标签，避免拥挤
+                if (i % Math.ceil(months.length / 6) === 0 || i === months.length - 1) {
+                    ctx.fillText(months[i], x, canvas.height - padding + 20);
+                }
+            }
+            
+            // 绘制标签
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('人脸数', 20, canvas.height / 2);
+            ctx.fillText('时间', canvas.width / 2, canvas.height - 10);
+            
+            // 绘制线图区域
+            ctx.beginPath();
+            ctx.moveTo(padding, canvas.height - padding);
+            
+            for (let i = 0; i < months.length; i++) {
+                const x = padding + i * xScale;
+                const y = canvas.height - padding - counts[i] * yScale;
+                
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.lineTo(padding + (months.length - 1) * xScale, canvas.height - padding);
+            ctx.closePath();
+            ctx.fillStyle = areaColor;
+            ctx.fill();
+            
+            // 绘制线
+            ctx.beginPath();
+            
+            for (let i = 0; i < months.length; i++) {
+                const x = padding + i * xScale;
+                const y = canvas.height - padding - counts[i] * yScale;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // 绘制点
+            for (let i = 0; i < months.length; i++) {
+                const x = padding + i * xScale;
+                const y = canvas.height - padding - counts[i] * yScale;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = pointColor;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // 添加数值标签
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.textAlign = 'center';
+                ctx.fillText(counts[i], x, y - 10);
+            }
+        }
+        
+        // 图表切换按钮
+        document.getElementById('btn-chart-1').addEventListener('click', function() {
+            document.getElementById('btn-chart-1').classList.add('active');
+            document.getElementById('btn-chart-2').classList.remove('active');
+            drawChart1();
+        });
+        
+        document.getElementById('btn-chart-2').addEventListener('click', function() {
+            document.getElementById('btn-chart-1').classList.remove('active');
+            document.getElementById('btn-chart-2').classList.add('active');
+            drawChart2();
+        });
+        
+        // 响应窗口大小变化，重绘图表
+        window.addEventListener('resize', function() {
+            if (document.getElementById('btn-chart-1').classList.contains('active')) {
+                drawChart1();
+            } else {
+                drawChart2();
+            }
+        });
+    </script>
+</body>
+</html> 

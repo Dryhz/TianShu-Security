@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 添加渐变定义 -->
+    <linearGradient id="tech-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0055aa" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#0084ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00aaff" stop-opacity="0.5"/>
+    </linearGradient>
+    
+    <pattern id="circuit-pattern" patternUnits="userSpaceOnUse" width="100" height="100">
+      <!-- 水平线 -->
+      <path d="M10,25 H90" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M20,50 H80" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M10,75 H90" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      
+      <!-- 垂直线 -->
+      <path d="M25,10 V90" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M50,20 V80" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M75,10 V90" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      
+      <!-- 节点 -->
+      <circle cx="25" cy="25" r="3" fill="#0084ff" opacity="0.3"/>
+      <circle cx="75" cy="25" r="3" fill="#00aaff" opacity="0.3"/>
+      <circle cx="50" cy="50" r="3" fill="#00ccff" opacity="0.3"/>
+      <circle cx="25" cy="75" r="3" fill="#0084ff" opacity="0.3"/>
+      <circle cx="75" cy="75" r="3" fill="#00aaff" opacity="0.3"/>
+      
+      <!-- 连接线 -->
+      <path d="M25,25 L50,50" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M75,25 L50,50" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M25,75 L50,50" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <path d="M75,75 L50,50" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      
+      <!-- 方块 -->
+      <rect x="45" y="20" width="10" height="10" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <rect x="20" y="45" width="10" height="10" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      <rect x="70" y="45" width="10" height="10" stroke="#0084ff" stroke-width="1" fill="none" opacity="0.2"/>
+      <rect x="45" y="70" width="10" height="10" stroke="#00aaff" stroke-width="1" fill="none" opacity="0.2"/>
+      
+      <!-- 集成电路图案 -->
+      <rect x="35" y="35" width="30" height="30" stroke="#0084ff" stroke-width="1" rx="2" ry="2" fill="none" opacity="0.2"/>
+      <line x1="35" y1="40" x2="30" y2="40" stroke="#00aaff" stroke-width="1" opacity="0.2"/>
+      <line x1="35" y1="45" x2="30" y2="45" stroke="#0084ff" stroke-width="1" opacity="0.2"/>
+      <line x1="35" y1="50" x2="30" y2="50" stroke="#00aaff" stroke-width="1" opacity="0.2"/>
+      <line x1="35" y1="55" x2="30" y2="55" stroke="#0084ff" stroke-width="1" opacity="0.2"/>
+      <line x1="35" y1="60" x2="30" y2="60" stroke="#00aaff" stroke-width="1" opacity="0.2"/>
+      
+      <line x1="65" y1="40" x2="70" y2="40" stroke="#0084ff" stroke-width="1" opacity="0.2"/>
+      <line x1="65" y1="45" x2="70" y2="45" stroke="#00aaff" stroke-width="1" opacity="0.2"/>
+      <line x1="65" y1="50" x2="70" y2="50" stroke="#0084ff" stroke-width="1" opacity="0.2"/>
+      <line x1="65" y1="55" x2="70" y2="55" stroke="#00aaff" stroke-width="1" opacity="0.2"/>
+      <line x1="65" y1="60" x2="70" y2="60" stroke="#0084ff" stroke-width="1" opacity="0.2"/>
+      
+      <!-- 额外的连接点 -->
+      <circle cx="10" cy="10" r="1.5" fill="#00aaff" opacity="0.3"/>
+      <circle cx="10" cy="90" r="1.5" fill="#0084ff" opacity="0.3"/>
+      <circle cx="90" cy="10" r="1.5" fill="#0084ff" opacity="0.3"/>
+      <circle cx="90" cy="90" r="1.5" fill="#00aaff" opacity="0.3"/>
+      
+      <!-- 添加数据流动线 -->
+      <rect x="0" y="30" width="4" height="1" fill="#00aaff" opacity="0.5">
+        <animate attributeName="x" from="0" to="100" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      
+      <rect x="70" y="0" width="1" height="4" fill="#0084ff" opacity="0.5">
+        <animate attributeName="y" from="0" to="100" dur="4s" repeatCount="indefinite"/>
+      </rect>
+      
+      <rect x="85" y="0" width="1" height="4" fill="#00ccff" opacity="0.5">
+        <animate attributeName="y" from="0" to="100" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      
+      <rect x="0" y="85" width="4" height="1" fill="#00ccff" opacity="0.5">
+        <animate attributeName="x" from="0" to="100" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+    </pattern>
+  </defs>
+  
+  <!-- 底层背景 -->
+  <rect width="100%" height="100%" fill="#041428" opacity="0.2"/>
+  
+  <!-- 用电路图案填充整个SVG -->
+  <rect width="100%" height="100%" fill="url(#circuit-pattern)"/>
+  
+  <!-- 添加额外的装饰性元素 -->
+  <g opacity="0.2">
+    <circle cx="200" cy="200" r="100" stroke="#0084ff" stroke-width="1" fill="none"/>
+    <circle cx="600" cy="600" r="150" stroke="#00aaff" stroke-width="1" fill="none"/>
+    <circle cx="400" cy="400" r="250" stroke="url(#tech-gradient)" stroke-width="1" fill="none"/>
+    
+    <!-- 装饰性十字线 -->
+    <line x1="0" y1="0" x2="100" y2="100" stroke="#0084ff" stroke-width="1" opacity="0.3"/>
+    <line x1="700" y1="0" x2="800" y2="100" stroke="#00aaff" stroke-width="1" opacity="0.3"/>
+    <line x1="0" y1="700" x2="100" y2="800" stroke="#00aaff" stroke-width="1" opacity="0.3"/>
+    <line x1="700" y1="700" x2="800" y2="800" stroke="#0084ff" stroke-width="1" opacity="0.3"/>
+  </g>
+</svg> 

@@ -1,0 +1,35 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10B981" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#059669" stop-opacity="0.4"/>
+    </linearGradient>
+    <filter id="filter0_b" x="-4" y="-4" width="56" height="56" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feGaussianBlur in="BackgroundImageFix" stdDeviation="4"/>
+      <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur" result="shape"/>
+    </filter>
+    <filter id="glow" x="-8" y="-8" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#10B981" flood-opacity="0.3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g filter="url(#filter0_b)">
+    <circle cx="24" cy="24" r="20" fill="url(#paint0_linear)" fill-opacity="0.15"/>
+    <circle cx="24" cy="24" r="19.5" stroke="white" stroke-opacity="0.2"/>
+  </g>
+  <g filter="url(#glow)">
+    <!-- 时钟指针 -->
+    <circle cx="24" cy="24" r="12" stroke="white" stroke-opacity="0.4" stroke-width="1.5"/>
+    <path d="M24 16V24L28 28" stroke="white" stroke-opacity="0.8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- 装饰元素 - 速度感 -->
+    <path d="M32 14L38 14M35 11L35 17" stroke="white" stroke-opacity="0.6" stroke-width="1" stroke-linecap="round"/>
+    <path d="M13 35L9 39" stroke="white" stroke-opacity="0.6" stroke-width="1" stroke-linecap="round"/>
+    <path d="M39 35L35 39" stroke="white" stroke-opacity="0.6" stroke-width="1" stroke-linecap="round"/>
+    <path d="M10 14L14 18" stroke="white" stroke-opacity="0.6" stroke-width="1" stroke-linecap="round"/>
+  </g>
+</svg> 

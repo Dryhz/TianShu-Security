@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能门卫管理系统</title>
+    <link rel="icon" href="/static/images/face.svg" type="image/svg+xml">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="/static/css/modern.css">
+    <link rel="stylesheet" href="/static/css/svg-background.css">
+    <link rel="stylesheet" href="/static/css/advanced-button.css">
+    
+    <style>
+        /* 科技感角标样式 */
+        .tech-corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-color: rgba(0,132,255,0.7);
+        }
+        
+        .tech-corner-tl {
+            top: 0;
+            left: 0;
+            border-top: 2px solid;
+            border-left: 2px solid;
+        }
+        
+        .tech-corner-tr {
+            top: 0;
+            right: 0;
+            border-top: 2px solid;
+            border-right: 2px solid;
+        }
+        
+        .tech-corner-bl {
+            bottom: 0;
+            left: 0;
+            border-bottom: 2px solid;
+            border-left: 2px solid;
+        }
+        
+        .tech-corner-br {
+            bottom: 0;
+            right: 0;
+            border-bottom: 2px solid;
+            border-right: 2px solid;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景发光元素 -->
+    <div class="glow-element top-left"></div>
+    <div class="glow-element top-right"></div>
+    <div class="glow-element bottom-left"></div>
+    <div class="glow-element bottom-right"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/images/face.svg" width="30" height="30" class="d-inline-block align-top me-2" alt="Logo">
+                <span class="typewriter">天枢安全 —— 智能门卫管理系统</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#recognition">
+                            <i class="fas fa-search me-1"></i> 人脸识别
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#enrollment">
+                            <i class="fas fa-user-plus me-1"></i> 人脸录入
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#management">
+                            <i class="fas fa-cog me-1"></i> 人脸管理
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 左侧区域 -->
+            <div class="col-md-8">
+                <div class="tab-page" id="recognition" style="display: block;">
+                    <h2 class="page-title">人脸识别</h2>
+                    
+                    <div class="card mb-4 hover-card tech-corners-all">
+                        <span class="corner-tr"></span>
+                        <span class="corner-bl"></span>
+                        <div class="card-header">
+                            <i class="fas fa-camera me-2"></i> 视频/图像显示
+                        </div>
+                        <div class="card-body">
+                            <div class="video-display mb-3" id="recognition-display">
+                                <!-- 视频或图像将在这里显示 -->
+                                <div class="tech-corner tech-corner-tl"></div>
+                                <div class="tech-corner tech-corner-tr"></div>
+                                <div class="tech-corner tech-corner-bl"></div>
+                                <div class="tech-corner tech-corner-br"></div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <button id="btn-file" class="btn btn-primary w-100">
+                                        <i class="fas fa-image me-2"></i> 图片
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button id="btn-camera" class="btn btn-primary w-100">
+                                        <i class="fas fa-camera me-2"></i> 摄像头
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button id="btn-recognize" class="btn btn-primary w-100 pulse-effect">
+                                        <i class="fas fa-search me-2"></i> 识别
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-page" id="enrollment" style="display: none;">
+                    <h2 class="page-title">人脸录入</h2>
+                    
+                    <div class="card mb-4 hover-card tech-corners-all">
+                        <span class="corner-tr"></span>
+                        <span class="corner-bl"></span>
+                        <div class="card-header">
+                            <i class="fas fa-user-plus me-2"></i> 人脸录入
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input type="text" id="enroll-name" class="form-control" placeholder="请输入人脸名称">
+                                        <button id="btn-create-folder" class="btn btn-primary">
+                                            <i class="fas fa-folder-plus me-1"></i> 创建
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="video-display mb-3" id="enrollment-display">
+                                <!-- 视频或图像将在这里显示 -->
+                                <div class="tech-corner tech-corner-tl"></div>
+                                <div class="tech-corner tech-corner-tr"></div>
+                                <div class="tech-corner tech-corner-bl"></div>
+                                <div class="tech-corner tech-corner-br"></div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <button id="btn-enroll-file" class="btn btn-primary w-100" disabled>
+                                        <i class="fas fa-image me-2"></i> 图片
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button id="btn-enroll-camera" class="btn btn-primary w-100" disabled>
+                                        <i class="fas fa-camera me-2"></i> 摄像头
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button id="btn-capture" class="btn btn-primary w-100" disabled>
+                                        <i class="fas fa-camera-retro me-2"></i> 捕获
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="enrollment-status"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card hover-card tech-corners-all">
+                        <span class="corner-tr"></span>
+                        <span class="corner-bl"></span>
+                        <div class="card-header">
+                            <i class="fas fa-image me-2"></i> 预览
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3" id="face-preview" style="width: 100%; height: 150px; background-color: rgba(0, 0, 0, 0.3); border-radius: 8px; overflow: hidden; position: relative;">
+                                        <div class="tech-corner tech-corner-tl"></div>
+                                        <div class="tech-corner tech-corner-tr"></div>
+                                        <div class="tech-corner tech-corner-bl"></div>
+                                        <div class="tech-corner tech-corner-br"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 d-flex align-items-center">
+                                    <button id="btn-save-face" class="btn btn-success" disabled>
+                                        <i class="fas fa-save me-2"></i> 保存人脸
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-page" id="management" style="display: none;">
+                    <h2 class="page-title">人脸管理</h2>
+                    
+                    <div class="card hover-card tech-corners-all">
+                        <span class="corner-tr"></span>
+                        <span class="corner-bl"></span>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-database me-2"></i> 人脸数据库</span>
+                            <button id="btn-refresh-database" class="btn btn-primary btn-sm">
+                                <i class="fas fa-sync-alt me-1"></i> 刷新
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <p id="face-database-info" class="mb-3 result-display">加载中...</p>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">#</th>
+                                            <th width="40%">人脸名称</th>
+                                            <th width="20%">图像数量</th>
+                                            <th width="30%">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="face-table-body">
+                                        <tr>
+                                            <td colspan="4" class="text-center">加载中...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div id="management-status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧区域 -->
+            <div class="col-md-4">
+                <div class="card mb-4 hover-card tech-corners-all">
+                    <span class="corner-tr"></span>
+                    <span class="corner-bl"></span>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                        <i class="fas fa-info-circle me-2"></i> 识别结果
+                        </div>
+                        <button id="btn-advanced-settings" class="btn btn-primary btn-sm">
+                            <i class="fas fa-chart-bar me-1"></i> 高级设置
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-panel">
+                            <h5 class="section-title">结果</h5>
+                            <div id="recognition-result" class="result-display mb-3">等待识别...</div>
+                            
+                            <h5 class="section-title">统计信息</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-tachometer-alt me-2" style="color: #0084ff;"></i>
+                                        <span>FPS:</span>
+                                        <span id="fps-value" class="ms-auto result-display">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-users me-2" style="color: #0084ff;"></i>
+                                        <span>人脸数:</span>
+                                        <span id="face-count" class="ms-auto result-display">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-percentage me-2" style="color: #0084ff;"></i>
+                                        <span>相似度:</span>
+                                        <span id="similarity" class="ms-auto result-display">0%</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-clock me-2" style="color: #0084ff;"></i>
+                                        <span>耗时:</span>
+                                        <span id="time-cost" class="ms-auto result-display">0ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card hover-card tech-corners-all">
+                    <span class="corner-tr"></span>
+                    <span class="corner-bl"></span>
+                    <div class="card-header">
+                        <i class="fas fa-info-circle me-2"></i> 系统信息
+                    </div>
+                    <div class="card-body">
+                        <div class="info-panel circuit-bg">
+                            <h5 class="section-title">系统状态</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-server me-2" style="color: #0084ff;"></i>
+                                        <span>状态:</span>
+                                        <span class="ms-auto result-display" style="color: #00ff00;">在线</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-microchip me-2" style="color: #0084ff;"></i>
+                                        <span>GPU:</span>
+                                        <span class="ms-auto result-display" style="color: #ff9900;">关闭</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h5 class="section-title">版本信息</h5>
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-code me-2" style="color: #0084ff;"></i>
+                                    <span>系统版本:</span>
+                                    <span class="ms-auto">V4.2.0</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-brain me-2" style="color: #0084ff;"></i>
+                                    <span>算法版本:</span>
+                                    <span class="ms-auto">V2.1.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的文件输入 -->
+    <input type="file" id="file-input" style="display: none;" accept="image/jpeg,image/png,image/jpg">
+    <input type="file" id="enroll-file-input" style="display: none;" accept="image/jpeg,image/png,image/jpg">
+    
+    <!-- 面板切换和交互的脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航链接处理
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            const tabPages = document.querySelectorAll('.tab-page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    
+                    // 更新活动链接
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 隐藏所有页面，显示目标页面
+                    tabPages.forEach(page => {
+                        if (page.id === targetId) {
+                            if (page.style.display === 'none') {
+                                page.style.display = 'block';
+                                // 从右侧滑入
+                                pageTransitionAnimation(document.querySelector('.tab-page[style="display: block;"]:not(#' + targetId + ')'), page, 'left');
+                            }
+                        } else {
+                            if (page.style.display === 'block') {
+                                // 其他显示的页面会被过渡动画处理
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 自定义脚本 -->
+    <script src="/static/js/digital-rain.js"></script>
+    <script src="/static/js/animations.js"></script>
+    <script src="/static/js/face-recognition.js"></script>
+    <script src="/static/js/advanced-features.js"></script>
+    <script src="/static/js/modal-enhancer.js"></script>
+
+    <!-- 作者信息弹窗 -->
+    {% include 'author_modal.html' %}
+</body>
+</html> 
