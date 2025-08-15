@@ -52,34 +52,29 @@
 ### 环境要求
 
 - **Python**: 3.7 或更高版本
+
 - **操作系统**: Windows 10/11, macOS 10.14+, Ubuntu 18.04+
+
 - **内存**: 建议 4GB 以上
+
 - **摄像头**: 可选，用于实时识别功能
 
-### 一键安装
+  ```bash
+  # requirements.txt
+  Flask==2.3.3
+  numpy==1.24.3
+  opencv-python==4.8.1.78
+  dlib==19.24.2
+  Werkzeug==2.3.7
+  scikit-learn==1.3.0
+  faiss-cpu==1.7.4
+  Jinja2==3.1.2
+  MarkupSafe==2.1.3
+  itsdangerous==2.1.2
+  click==8.1.7
+  Pillow==10.0.1
+  ```
 
-1. **克隆项目**
-```bash
-git clone https://github.com/your-username/face-recognition-system.git
-cd face-recognition-system
-```
-
-2. **运行启动脚本**
-```bash
-# Windows
-python LaunchClient.py
-
-# macOS/Linux
-python3 LaunchClient.py
-```
-
-启动脚本将自动完成以下操作：
-- 检查 Python 版本
-- 安装必要的依赖包
-- 下载并验证模型文件
-- 创建必要的目录结构
-- 启动 Web 服务器
-- 自动打开浏览器
 
 ### 手动安装
 
